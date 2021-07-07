@@ -38,7 +38,7 @@ plt.scatter([1,2,3,4,5], [1,4,9,16,25])
 # %%
 # 3. 넘파이 배열로 산점도 그리기
 x = np.random.randn(1000) # 표준 정규 분포를 따르는 난수 1000개
-y = np.ramdn.rand(1000)# 표준 정규 분포를 따르는 난수 1000개
+y = np.random.randn(1000)# 표준 정규 분포를 따르는 난수 1000개
 plt.scatter(x,y)
 plt.show()
 # %%

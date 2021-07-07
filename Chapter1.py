@@ -37,8 +37,7 @@ plt.show()
 # 훈련 데이터 준비하기
 x = diabetes.data[: , 2]
 y = diabetes.target
-# %%
-# ################################################################################################
+#################################################################################################
 # 선형 회귀의 목표는 입력 데이터와 타깃 데이터를 통해 기울기와 절편을 찾는것
 # 경사 하강법은 선형회귀의 목표를 통해 모델이 데이터를 잘 표현할 수 있또록 기울기를 사용하여 모델을 조금씩 조정하는 최적화 알고리즘
 # 훈련 데이터에 잘 맞는 가중치와 절편을 찾는방법
@@ -156,4 +155,84 @@ for i in range(1 , 100):
         w = w + w_rate * err
         b = b + 1 * err
 print( w , b )
+# 100번의 에포크를 반복하여 찾은 w와 b는 약 913.6, 123,4
+
+# %%
+# 그래프로 출력
+plt.scatter(x,y)
+pt1 = (-0.1, -0.1 * w + b )
+pt2 = (0.15, 0.15 * w + b )
+plt.plot([pt1[0], pt2[0]],[pt1[1], pt2[1]])
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
+# 직선이 전체 데이터의 경향을 제법 잘따라가는걸 확인할 수있음
+# 여기까지 했던 과정을 통해 얻은 모델
+# y^ = 913.6x + 123.4
+
+# %%
+# 6. 모델로 예측하기
+x_new = 0.18
+y_pred = x_new * w + b 
+print(y_pred)
+
+#%%
+# 위 데이터를 산점도 위에 나타내기
+plt.scatter(x,y)
+plt.scatter(x_new, y_pred)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
+
+# %%
+# 지금까지 모델을 만든과정
+# 1. w와 b를 임의의 값으로 초기화하고 훈련 데이터의 샘플을 하나씩 대입하여 y와 y^오차를 구함
+# 2. 1에서 구한 오차를 w와 b의 변화율에 곱하고 이 값을 이용하여 w와 b를 업데이트
+# 3. 만약 y^ 이 y보다 커지면 오차는 음수가 되어 자동으로  w와 b가 줄어드는 방향으로 업데이트
+# 4. 반대로 y^이 y보다 작으면 오차는 암수가 되고 w와 b는 더 커지도록 업데이트
+
+
+#%%
+# 손실 함수부터 
+# 제곱 오차는 타깃값과 예측값을 뺀 다음 제곱한 것에 불과
+# 제곱오차가 최소가 되면 산점도 그래프를 가장 잘 표현한 직선이 그려짐
+
+
+# 가중치에 대하여 제곱 오차 미분하기 및 편미분 등 공식은 구박사한테물어보시길
+# Neuron 클래스 만들기
+class Neuron:
+    def __init__(self):
+        self.w = 1.0 # 가중치 및 절편 초기화
+        self.b = 1.0 # 학습할때 가중치 w와 절편 b는 시작값이 있어야 하므로 임으로 1.0을 지정함
+        # 정방향 계산을 위한 메서드를 정의  
+    def forpass(self, x): #직선 방정식 계산
+        y_hat = x * self.w + self.b
+        return y_hat
+        # 정방향 계산을 통해 얻어낸 y^과 y의 차이 즉 오차가 뉴런의 오른쪽 방향에서 왼쪽으로 감
+        # 이를 역방향 계산이라고 부름
+    def backprop(self, x, err):
+        w_grad = x * err # 가중치에 대한 그레이디언트 계산
+        b_grad = 1 * err # 절편에 대한 그레이디언트 계산
+        return w_grad, b_grad
+        # 편미분을 통해 얻었던 수식을 그대로 코드에 옮김
+        # 즉 가중치의 그레이디언트는 x와 오차를 곱하고 절편의 그레이디언트는 1과 오차를 곱하면됨
+    def fit(self, x, y, epochs=100): 
+        for i in range(epochs): # 해당 에포크만큼 반복
+            for x_i, y_i in zip(x , y): # 모든 샘플에 대해 반복
+                y_hat = self.forpass(x_i) # 정방향 계산
+                err = -(y_i - y_hat) # 오차 계산
+                w_grad, b_grad = self.backprop(x_i, err) # 역방향 계산
+                self.w-= w_grad
+                self.b -= b_grad
+neuron = Neuron( )
+neuron.fit( x , y )
+
+# %%
+plt.scatter( x , y )
+plt1 = (-0.1, -0.1 * neuron.w + neuron.b)
+plt2 = (0.15, 0.15 * neuron.w + neuron.b)
+plt.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]])
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
 # %%
